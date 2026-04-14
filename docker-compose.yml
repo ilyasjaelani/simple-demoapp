@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  demoapp:
+    image: demoapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demoapp
+    restart: unless-stopped
+    ports:
+      - "8080:80"         # host port 8080 → container port 80
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

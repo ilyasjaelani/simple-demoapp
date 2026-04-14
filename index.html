@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemoApp — Cloud Trial</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: rgba(255,255,255,0.08);
+    --accent: #4f8ef7;
+    --accent2: #7c5ef7;
+    --text: #e8eaf6;
+    --muted: #7c84a0;
+    --success: #3ecf8e;
+    --warn: #f5a623;
+    --danger: #f24e4e;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── LOGIN PAGE ─── */
+  #login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.12) 0%, transparent 70%),
+                var(--bg);
+    padding: 2rem;
+  }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.3rem;
+  }
+
+  .login-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+  }
+
+  .btn-login {
+    width: 100%;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  .btn-login:hover { opacity: 0.9; }
+  .btn-login:active { transform: scale(0.99); }
+
+  .error-msg {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    text-align: center;
+    min-height: 1.2rem;
+  }
+
+  .hint {
+    margin-top: 1.8rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .hint code {
+    background: var(--surface2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  /* ─── DASHBOARD ─── */
+  #dashboard-page {
+    display: none;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.8rem 1.2rem;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.65rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(79,142,247,0.12); color: var(--accent); }
+
+  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 500; color: #fff;
+    flex-shrink: 0;
+  }
+
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 0.85rem; font-weight: 500; }
+  .user-role { font-size: 0.75rem; color: var(--muted); }
+
+  .btn-logout {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 1rem; padding: 4px;
+    border-radius: 6px; transition: color 0.15s;
+  }
+  .btn-logout:hover { color: var(--danger); }
+
+  .main-content {
+    margin-left: 240px;
+    padding: 2rem 2.5rem;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--text);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(62,207,142,0.12);
+    color: var(--success);
+    border: 1px solid rgba(62,207,142,0.25);
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .stat-value {
+    font-size: 1.9rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-delta {
+    font-size: 0.8rem;
+    color: var(--success);
+  }
+
+  .stat-delta.down { color: var(--danger); }
+
+  /* Cards */
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+  }
+
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Mini bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 80px;
+  }
+
+  .bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .bar:hover { opacity: 1; }
+
+  .bar-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  /* Activity list */
+  .activity-list { list-style: none; }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .act-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .act-desc { flex: 1; }
+  .act-time { font-size: 0.78rem; color: var(--muted); }
+
+  /* System info table */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td {
+    padding: 0.6rem 0;
+    font-size: 0.88rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-table td:first-child { color: var(--muted); width: 40%; }
+  .info-table tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .pill.green { background: rgba(62,207,142,0.12); color: var(--success); }
+  .pill.blue { background: rgba(79,142,247,0.12); color: var(--accent); }
+
+  /* Hamburger for mobile */
+  .ham {
+    display: none;
+    position: fixed;
+    top: 1rem; left: 1rem;
+    z-index: 200;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 90;
+  }
+
+  @media (max-width: 768px) {
+    .ham { display: block; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .overlay.open { display: block; }
+    .main-content { margin-left: 0; padding: 1.2rem 1rem; padding-top: 4rem; }
+    .cards-row { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="logo">DemoApp</div>
+    <p class="login-subtitle">Cloud Hosting Trial — Vendor Demo</p>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Sign In</button>
+    <p class="error-msg" id="err-msg"></p>
+
+    <div class="hint">
+      Test account: <code>admin</code> / <code>demo1234</code>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+<div id="dashboard-page">
+
+  <button class="ham" id="ham-btn" onclick="toggleSidebar()">☰</button>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">DemoApp</div>
+
+    <button class="nav-item active" onclick="setNav(this,'overview')">
+      <span class="nav-icon">◈</span> Overview
+    </button>
+    <button class="nav-item" onclick="setNav(this,'system')">
+      <span class="nav-icon">⬡</span> System Info
+    </button>
+    <button class="nav-item" onclick="setNav(this,'activity')">
+      <span class="nav-icon">◎</span> Activity
+    </button>
+    <button class="nav-item" onclick="setNav(this,'deploy')">
+      <span class="nav-icon">⬤</span> Deployment
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="avatar" id="av-initials">AD</div>
+        <div class="user-info">
+          <div class="user-name" id="display-name">Admin</div>
+          <div class="user-role">Demo Account</div>
+        </div>
+        <button class="btn-logout" title="Logout" onclick="doLogout()">⏻</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <h1 class="page-title" id="page-title">Overview</h1>
+      <span class="badge"><span class="dot"></span> Server Online</span>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div id="sec-overview">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Uptime</div>
+          <div class="stat-value">99.9<span style="font-size:1rem">%</span></div>
+          <div class="stat-delta">↑ Stable</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">CPU Usage</div>
+          <div class="stat-value" id="cpu-val">18<span style="font-size:1rem">%</span></div>
+          <div class="stat-delta">↓ Low load</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Memory</div>
+          <div class="stat-value">1.2<span style="font-size:1rem">GB</span></div>
+          <div class="stat-delta">of 4 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Requests</div>
+          <div class="stat-value" id="req-val">247</div>
+          <div class="stat-delta">↑ +12 today</div>
+        </div>
+      </div>
+
+      <div class="cards-row">
+        <div class="card">
+          <div class="card-title">Request Traffic (7 days)</div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <ul class="activity-list" id="act-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM INFO SECTION -->
+    <div id="sec-system" style="display:none">
+      <div class="card" style="max-width:600px">
+        <div class="card-title">Host Environment</div>
+        <table class="info-table">
+          <tr><td>OS</td><td>Ubuntu 22.04 LTS</td></tr>
+          <tr><td>Runtime</td><td>Docker (containerized)</td></tr>
+          <tr><td>Web Server</td><td>Nginx (reverse proxy)</td></tr>
+          <tr><td>Port (internal)</td><td>80</td></tr>
+          <tr><td>Port (external)</td><td>8080 → 80</td></tr>
+          <tr><td>Container</td><td><span class="pill green">Running</span></td></tr>
+          <tr><td>Image</td><td>demoapp:latest</td></tr>
+          <tr><td>Network</td><td>bridge (docker default)</td></tr>
+          <tr><td>Volume</td><td>— (stateless demo)</td></tr>
+          <tr><td>Health Check</td><td><span class="pill blue">HTTP GET /</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACTIVITY SECTION -->
+    <div id="sec-activity" style="display:none">
+      <div class="card">
+        <div class="card-title">Full Activity Log</div>
+        <ul class="activity-list" id="act-list-full"></ul>
+      </div>
+    </div>
+
+    <!-- DEPLOYMENT SECTION -->
+    <div id="sec-deploy" style="display:none">
+      <div class="card" style="max-width:640px">
+        <div class="card-title">Deployment Configuration</div>
+        <table class="info-table">
+          <tr><td>Deployment Mode</td><td>Docker / Containerized</td></tr>
+          <tr><td>Base Image</td><td>nginx:alpine</td></tr>
+          <tr><td>Exposed Port</td><td>8080 (host) → 80 (container)</td></tr>
+          <tr><td>Protocol</td><td>HTTP (demo); HTTPS via proxy</td></tr>
+          <tr><td>Deploy Command</td><td><code style="font-size:0.78rem;background:var(--surface2);padding:2px 6px;border-radius:4px">docker compose up -d</code></td></tr>
+          <tr><td>Min. RAM</td><td>512 MB</td></tr>
+          <tr><td>Min. CPU</td><td>1 vCPU</td></tr>
+          <tr><td>Storage</td><td>~50 MB (image only)</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const USERS = { admin: 'demo1234' };
+
+function doLogin() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  const err = document.getElementById('err-msg');
+  if (USERS[u] && USERS[u] === p) {
+    err.textContent = '';
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard-page').style.display = 'block';
+    document.getElementById('display-name').textContent = u.charAt(0).toUpperCase() + u.slice(1);
+    document.getElementById('av-initials').textContent = u.slice(0,2).toUpperCase();
+    initDashboard();
+  } else {
+    err.textContent = 'Invalid username or password.';
+  }
+}
+
+function doLogout() {
+  document.getElementById('dashboard-page').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+
+document.getElementById('password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('username').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('password').focus();
+});
+
+function setNav(btn, sec) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['overview','system','activity','deploy'].forEach(s => {
+    document.getElementById('sec-'+s).style.display = s===sec ? '' : 'none';
+  });
+  document.getElementById('page-title').textContent =
+    {overview:'Overview',system:'System Info',activity:'Activity Log',deploy:'Deployment'}[sec];
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+const activities = [
+  {icon:'🔐', desc:'Admin logged in', time:'2 min ago'},
+  {icon:'🚀', desc:'Container started successfully', time:'10 min ago'},
+  {icon:'✅', desc:'Health check passed', time:'15 min ago'},
+  {icon:'🔄', desc:'Nginx config reloaded', time:'1 hr ago'},
+  {icon:'📦', desc:'Docker image pulled', time:'2 hr ago'},
+  {icon:'🖥️', desc:'Server provisioned', time:'3 hr ago'},
+  {icon:'🌐', desc:'DNS resolved', time:'4 hr ago'},
+];
+
+function initDashboard() {
+  // Bar chart
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals = [42,67,55,88,73,95,61];
+  const max = Math.max(...vals);
+  const chart = document.getElementById('bar-chart');
+  chart.innerHTML = '';
+  vals.forEach((v,i) => {
+    const w = document.createElement('div');
+    w.className = 'bar-wrap';
+    w.innerHTML = `<div class="bar" style="height:${(v/max)*100}%" title="${v} requests"></div><div class="bar-label">${days[i]}</div>`;
+    chart.appendChild(w);
+  });
+
+  // Activity lists
+  ['act-list','act-list-full'].forEach(id => {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    activities.forEach(a => {
+      el.innerHTML += `<li class="activity-item">
+        <div class="act-icon">${a.icon}</div>
+        <span class="act-desc">${a.desc}</span>
+        <span class="act-time">${a.time}</span>
+      </li>`;
+    });
+  });
+
+  // Simulate live CPU
+  setInterval(() => {
+    const v = 12 + Math.round(Math.random()*20);
+    document.getElementById('cpu-val').innerHTML = v+'<span style="font-size:1rem">%</span>';
+  }, 3000);
+
+  // Simulate requests counter
+  let req = 247;
+  setInterval(() => {
+    if (Math.random() > 0.6) {
+      req++;
+      document.getElementById('req-val').textContent = req;
+    }
+  }, 4000);
+}
+</script>
+</body>
+</html>
