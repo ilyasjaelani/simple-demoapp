@@ -1,0 +1,80 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:           # trigger manual dari GitHub UI
+    inputs:
+      image_tag:
+        description: 'Image tag to rollback to (e.g. sha-abc1234, or "previous")'
+        required: true
+        default: 'previous'
+      reason:
+        description: 'Reason for rollback'
+        required: false
+        default: 'Manual rollback'
+
+env:
+  FULL_IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  rollback:
+    name: Rollback to ${{ github.event.inputs.image_tag }}
+    runs-on: ubuntu-22.04
+
+    environment:
+      name: production
+
+    steps:
+      - name: Print rollback info
+        run: |
+          echo "=== ROLLBACK INITIATED ==="
+          echo "Target tag : ${{ github.event.inputs.image_tag }}"
+          echo "Reason     : ${{ github.event.inputs.reason }}"
+          echo "Triggered by: ${{ github.actor }}"
+
+      - name: Rollback on server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            set -e
+            cd ~/demoapp
+
+            TARGET_TAG="${{ github.event.inputs.image_tag }}"
+
+            echo "Logging into registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+              -u ${{ github.actor }} --password-stdin
+
+            if [ "$TARGET_TAG" = "previous" ]; then
+              echo "Finding previous image..."
+              PREV=$(docker images ${{ env.FULL_IMAGE }} --format "{{.Tag}}\t{{.CreatedAt}}" \
+                | grep "sha-" | sort -k2 -r | sed -n '2p' | awk '{print $1}')
+              if [ -z "$PREV" ]; then
+                echo "❌ No previous image found locally. Specify an explicit tag."
+                exit 1
+              fi
+              TARGET_TAG=$PREV
+              echo "Previous tag found: $TARGET_TAG"
+            fi
+
+            echo "Pulling ${{ env.FULL_IMAGE }}:$TARGET_TAG ..."
+            docker pull ${{ env.FULL_IMAGE }}:$TARGET_TAG
+
+            # Update compose to use specific tag
+            sed -i "s|image: .*|image: ${{ env.FULL_IMAGE }}:$TARGET_TAG|" docker-compose.yml
+
+            docker compose down --remove-orphans || true
+            docker compose up -d
+
+            sleep 6
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
+            if [ "$STATUS" -eq 200 ]; then
+              echo "✅ Rollback SUCCESS to $TARGET_TAG — HTTP $STATUS"
+            else
+              echo "❌ Rollback FAILED — HTTP $STATUS"
+              docker compose logs
+              exit 1
+            fi
