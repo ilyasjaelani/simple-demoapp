@@ -62,7 +62,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ env.IMAGE_NAME }}:test
+          tags: ${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -70,7 +70,7 @@ jobs:
       - name: Test container health
         run: |
           echo "Starting test container..."
-          docker run -d --name test-container -p 8080:80 ${{ env.IMAGE_NAME }}:test
+          docker run -d --name test-container -p 8080:80 ${{ env.IMAGE_NAME }}:latest
 
           echo "Waiting for container to be ready..."
           sleep 5
