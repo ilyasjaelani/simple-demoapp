@@ -1,0 +1,255 @@
+name: CI/CD — Build, Test & Deploy
+
+on:
+  push:
+    branches:
+      - main          # deploy otomatis ke production saat push ke main
+  pull_request:
+    branches:
+      - main          # hanya build & test saat ada PR (tidak deploy)
+
+env:
+  IMAGE_NAME: demoapp
+  REGISTRY: ghcr.io                              # GitHub Container Registry (gratis)
+  FULL_IMAGE: ghcr.io/${{ github.repository }}   # contoh: ghcr.io/username/demoapp
+
+jobs:
+  # ══════════════════════════════════════════
+  # JOB 1 — BUILD & TEST
+  # Berjalan untuk push maupun PR
+  # ══════════════════════════════════════════
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Validasi file penting ada semua ──
+      - name: Check required files
+        run: |
+          echo "Checking required files..."
+          test -f index.html    && echo "✅ index.html found"    || (echo "❌ index.html missing" && exit 1)
+          test -f Dockerfile    && echo "✅ Dockerfile found"    || (echo "❌ Dockerfile missing" && exit 1)
+          test -f nginx.conf    && echo "✅ nginx.conf found"    || (echo "❌ nginx.conf missing" && exit 1)
+          test -f docker-compose.yml && echo "✅ docker-compose.yml found" || (echo "❌ docker-compose.yml missing" && exit 1)
+
+      # ── Validasi sintaks HTML ──
+      - name: Validate HTML
+        run: |
+          echo "Validating HTML structure..."
+          grep -q "<!DOCTYPE html>" index.html && echo "✅ DOCTYPE found" || (echo "❌ DOCTYPE missing" && exit 1)
+          grep -q "</html>" index.html          && echo "✅ Closing html tag found" || exit 1
+          grep -q "doLogin"    index.html       && echo "✅ Login function found"   || (echo "❌ Login function missing" && exit 1)
+          grep -q "generateReport" index.html  && echo "✅ X-Ray report function found" || echo "⚠️ generateReport not found"
+          echo "HTML validation passed."
+
+      # ── Validasi Dockerfile ──
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error    # hanya gagal jika ada error (bukan warning)
+
+      # ── Setup Docker Buildx ──
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ── Build image (tanpa push) untuk test ──
+      - name: Build Docker image (test)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── Jalankan container dan cek health ──
+      - name: Test container health
+        run: |
+          echo "Starting test container..."
+          docker run -d --name test-container -p 8080:80 ${{ env.IMAGE_NAME }}:test
+
+          echo "Waiting for container to be ready..."
+          sleep 5
+
+          echo "Testing HTTP response..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
+          echo "HTTP Status: $STATUS"
+
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ Container health check PASSED (HTTP 200)"
+          else
+            echo "❌ Container health check FAILED (HTTP $STATUS)"
+            docker logs test-container
+            exit 1
+          fi
+
+          echo "Checking response content..."
+          BODY=$(curl -s http://localhost:8080)
+          echo "$BODY" | grep -q "DemoApp" && echo "✅ App title found in response" || (echo "❌ App title missing" && exit 1)
+
+          docker stop test-container
+          docker rm test-container
+          echo "✅ All container tests passed."
+
+  # ══════════════════════════════════════════
+  # JOB 2 — PUSH IMAGE KE REGISTRY
+  # Hanya berjalan saat push ke main (bukan PR)
+  # ══════════════════════════════════════════
+  push-image:
+    name: Push Image to Registry
+    runs-on: ubuntu-22.04
+    needs: build-and-test                  # harus lulus build & test dulu
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write                      # izin push ke GitHub Container Registry
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ── Login ke GitHub Container Registry ──
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}   # otomatis tersedia, tidak perlu setup manual
+
+      # ── Generate tag berdasarkan branch/commit ──
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.FULL_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # ── Build & Push ke registry ──
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64             # sesuaikan jika server ARM: linux/arm64
+
+      - name: Print image info
+        run: |
+          echo "✅ Image pushed successfully"
+          echo "Tags: ${{ steps.meta.outputs.tags }}"
+          echo "Digest: ${{ steps.build.outputs.digest }}"
+
+  # ══════════════════════════════════════════
+  # JOB 3 — DEPLOY KE SERVER
+  # SSH ke server, pull image terbaru, restart container
+  # ══════════════════════════════════════════
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-22.04
+    needs: push-image                      # harus selesai push image dulu
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    environment:
+      name: production
+      url: http://${{ secrets.SERVER_HOST }}:8080
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Deploy via SSH ──
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            set -e
+            echo "=== Starting deployment ==="
+
+            # Login ke GitHub Container Registry di server
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+              -u ${{ github.actor }} --password-stdin
+
+            # Buat folder app jika belum ada
+            mkdir -p ~/demoapp
+            cd ~/demoapp
+
+            # Pull image terbaru
+            echo "Pulling latest image..."
+            docker pull ${{ env.FULL_IMAGE }}:latest
+
+            # Backup docker-compose jika sudah ada
+            [ -f docker-compose.yml ] && cp docker-compose.yml docker-compose.yml.bak
+
+            # Tulis docker-compose.yml terbaru langsung dari GitHub Actions
+            cat > docker-compose.yml << 'COMPOSE'
+            version: "3.9"
+            services:
+              demoapp:
+                image: ghcr.io/${{ github.repository }}:latest
+                container_name: demoapp
+                restart: unless-stopped
+                ports:
+                  - "8080:80"
+                healthcheck:
+                  test: ["CMD", "wget", "-qO-", "http://localhost/"]
+                  interval: 30s
+                  timeout: 5s
+                  retries: 3
+                  start_period: 10s
+            COMPOSE
+
+            # Stop container lama (jika ada), jalankan yang baru
+            docker compose down --remove-orphans || true
+            docker compose up -d
+
+            echo "Waiting for container to start..."
+            sleep 8
+
+            # Verifikasi deployment berhasil
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 || echo "000")
+            if [ "$STATUS" -eq 200 ]; then
+              echo "✅ Deployment SUCCESS — HTTP $STATUS"
+            else
+              echo "❌ Deployment FAILED — HTTP $STATUS"
+              docker compose logs
+              exit 1
+            fi
+
+            # Bersihkan image lama (hemat disk)
+            docker image prune -f
+
+            echo "=== Deployment complete ==="
+
+      # ── Notifikasi hasil deploy ──
+      - name: Notify deployment result
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Deployment to production SUCCEEDED"
+            echo "URL: http://${{ secrets.SERVER_HOST }}:8080"
+          else
+            echo "❌ Deployment FAILED — check logs above"
+          fi
