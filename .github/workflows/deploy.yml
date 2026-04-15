@@ -170,7 +170,7 @@ jobs:
 
     environment:
       name: production
-      url: http://${{ secrets.SERVER_HOST }}:8080
+      url: http://${{ vars.SERVER_HOST }}:8080
 
     steps:
       - name: Checkout repository
@@ -180,7 +180,7 @@ jobs:
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_HOST }}
+          host: ${{ vars.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
