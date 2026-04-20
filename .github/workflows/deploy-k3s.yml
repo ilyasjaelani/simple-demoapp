@@ -11,40 +11,45 @@ env:
 jobs:
   deploy:
     name: Build, Push & Deploy
-    runs-on: self-hosted        # pakai runner di mesin lokal
+    runs-on: self-hosted
 
     steps:
-      # ── 1. Ambil kode terbaru ──
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── 2. Login ke GitHub Container Registry ──
       - name: Login to GHCR
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
           docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      # ── 3. Build & push image dengan tag SHA commit ──
       - name: Build & push image
+        id: build_step
         run: |
-          TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
+          # Ambil 7 karakter pertama SHA untuk tagging
+          TAG=sha-${{ github.sha }}
+          TAG=${TAG:0:11} 
+          
+          echo "Building $TAG..."
           docker build -t ${{ env.IMAGE }}:$TAG -t ${{ env.IMAGE }}:latest .
+          
           docker push ${{ env.IMAGE }}:$TAG
           docker push ${{ env.IMAGE }}:latest
-          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
-
-      # ── 4. Update image di deployment ──
+          
+          # Simpan tag ke output agar bisa dipakai step berikutnya
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+        # ID digunakan untuk mereferensikan output step ini
+        
       - name: Deploy to k3s
         run: |
+          # Menggunakan tag spesifik (SHA) lebih aman daripada :latest 
+          # untuk menghindari caching issue di K8s nodes
           kubectl set image deployment/demoapp \
-            demoapp=${{ env.IMAGE }}:${{ env.IMAGE_TAG }}
+            demoapp=${{ env.IMAGE }}:${{ steps.build_step.outputs.tag }}
 
-      # ── 5. Tunggu rollout selesai ──
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/demoapp --timeout=120s
 
-      # ── 6. Verifikasi pod berjalan ──
       - name: Verify
         run: |
           kubectl get pods -l app=demoapp
