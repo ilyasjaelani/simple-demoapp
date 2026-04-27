@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   demoapp:
-    image: demoapp:latest
+    image: ghcr.io/ilyasjaelani/simple-demoapp
     build:
       context: .
       dockerfile: Dockerfile
