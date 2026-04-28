@@ -7,421 +7,139 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #22263a;
-    --border: rgba(255,255,255,0.08);
-    --accent: #4f8ef7;
-    --accent2: #7c5ef7;
-    --text: #e8eaf6;
-    --muted: #7c84a0;
-    --success: #3ecf8e;
-    --warn: #f5a623;
-    --danger: #f24e4e;
-    --radius: 12px;
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+    --border: rgba(255,255,255,0.08); --accent: #4f8ef7; --accent2: #7c5ef7;
+    --text: #e8eaf6; --muted: #7c84a0; --success: #3ecf8e;
+    --warn: #f5a623; --danger: #f24e4e; --radius: 12px;
   }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* ─── LOGIN PAGE ─── */
+  /* LOGIN */
   #login-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.12) 0%, transparent 70%),
-                var(--bg);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.12) 0%, transparent 70%), var(--bg);
     padding: 2rem;
   }
-
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 3rem 2.5rem;
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.8rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.3rem;
-  }
-
-  .login-subtitle {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-bottom: 2.5rem;
-    font-weight: 300;
-  }
-
-  .form-group {
-    margin-bottom: 1.2rem;
-  }
-
-  label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
-  input[type="text"], input[type="password"] {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.85rem 1rem;
-    font-size: 0.95rem;
-    font-family: inherit;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  input:focus {
-    border-color: var(--accent);
-  }
-
-  .btn-login {
-    width: 100%;
-    margin-top: 0.5rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
-    border-radius: 10px;
-    padding: 0.9rem;
-    font-size: 0.95rem;
-    font-family: inherit;
-    font-weight: 500;
-    color: #fff;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-  }
-
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3rem 2.5rem; width: 100%; max-width: 420px; }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 1.8rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.3rem; }
+  .login-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2.5rem; font-weight: 300; }
+  .form-group { margin-bottom: 1.2rem; }
+  label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  input[type="text"], input[type="password"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; font-size: 0.95rem; font-family: inherit; color: var(--text); outline: none; transition: border-color 0.2s; }
+  input:focus { border-color: var(--accent); }
+  .btn-login { width: 100%; margin-top: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 10px; padding: 0.9rem; font-size: 0.95rem; font-family: inherit; font-weight: 500; color: #fff; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
   .btn-login:hover { opacity: 0.9; }
   .btn-login:active { transform: scale(0.99); }
+  .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 0.8rem; text-align: center; min-height: 1.2rem; }
+  .hint { margin-top: 1.8rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--muted); text-align: center; }
+  .hint code { background: var(--surface2); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
 
-  .error-msg {
-    color: var(--danger);
-    font-size: 0.85rem;
-    margin-top: 0.8rem;
-    text-align: center;
-    min-height: 1.2rem;
-  }
-
-  .hint {
-    margin-top: 1.8rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.82rem;
-    color: var(--muted);
-    text-align: center;
-  }
-
-  .hint code {
-    background: var(--surface2);
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-  }
-
-  /* ─── DASHBOARD ─── */
-  #dashboard-page {
-    display: none;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    width: 240px;
-    height: 100vh;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 1.8rem 1.2rem;
-    z-index: 100;
-    transition: transform 0.3s;
-  }
-
-  .sidebar-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.4rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 2.5rem;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0.65rem 0.8rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: var(--muted);
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    margin-bottom: 2px;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    font-family: inherit;
-  }
-
+  /* DASHBOARD */
+  #dashboard-page { display: none; min-height: 100vh; }
+  .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.8rem 1.2rem; z-index: 100; transition: transform 0.3s; }
+  .sidebar-logo { font-family: 'DM Serif Display', serif; font-size: 1.4rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2.5rem; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 0.65rem 0.8rem; border-radius: 8px; font-size: 0.9rem; color: var(--muted); cursor: pointer; transition: background 0.15s, color 0.15s; margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
   .nav-item:hover { background: var(--surface2); color: var(--text); }
   .nav-item.active { background: rgba(79,142,247,0.12); color: var(--accent); }
-
   .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
-
-  .sidebar-footer {
-    margin-top: auto;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .user-pill {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; font-weight: 500; color: #fff;
-    flex-shrink: 0;
-  }
-
+  .sidebar-footer { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .user-pill { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 500; color: #fff; flex-shrink: 0; }
   .user-info { flex: 1; min-width: 0; }
   .user-name { font-size: 0.85rem; font-weight: 500; }
   .user-role { font-size: 0.75rem; color: var(--muted); }
-
-  .btn-logout {
-    background: none; border: none; color: var(--muted);
-    cursor: pointer; font-size: 1rem; padding: 4px;
-    border-radius: 6px; transition: color 0.15s;
-  }
+  .btn-logout { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 4px; border-radius: 6px; transition: color 0.15s; }
   .btn-logout:hover { color: var(--danger); }
-
-  .main-content {
-    margin-left: 240px;
-    padding: 2rem 2.5rem;
-    min-height: 100vh;
-  }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-  }
-
-  .page-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.6rem;
-    color: var(--text);
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(62,207,142,0.12);
-    color: var(--success);
-    border: 1px solid rgba(62,207,142,0.25);
-    border-radius: 20px;
-    padding: 0.3rem 0.9rem;
-    font-size: 0.78rem;
-    font-weight: 500;
-  }
-
+  .main-content { margin-left: 240px; padding: 2rem 2.5rem; min-height: 100vh; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .page-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(62,207,142,0.12); color: var(--success); border: 1px solid rgba(62,207,142,0.25); border-radius: 20px; padding: 0.3rem 0.9rem; font-size: 0.78rem; font-weight: 500; }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
 
-  /* Stats grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.4rem;
-  }
-
-  .stat-label {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--muted);
-    margin-bottom: 0.6rem;
-  }
-
-  .stat-value {
-    font-size: 1.9rem;
-    font-weight: 300;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    margin-bottom: 0.4rem;
-  }
-
-  .stat-delta {
-    font-size: 0.8rem;
-    color: var(--success);
-  }
-
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; }
+  .stat-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.6rem; }
+  .stat-value { font-size: 1.9rem; font-weight: 300; letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.4rem; }
+  .stat-delta { font-size: 0.8rem; color: var(--success); }
   .stat-delta.down { color: var(--danger); }
 
-  /* Cards */
-  .cards-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.2rem;
-    margin-bottom: 2rem;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.4rem;
-  }
-
-  .card-title {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--muted);
-    margin-bottom: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Mini bar chart */
-  .bar-chart {
-    display: flex;
-    align-items: flex-end;
-    gap: 6px;
-    height: 80px;
-  }
-
-  .bar-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    height: 100%;
-    justify-content: flex-end;
-  }
-
-  .bar {
-    width: 100%;
-    border-radius: 4px 4px 0 0;
-    background: linear-gradient(180deg, var(--accent), var(--accent2));
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
+  /* CARDS */
+  .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 2rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; }
+  .card-title { font-size: 0.85rem; font-weight: 500; color: var(--muted); margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--accent), var(--accent2)); opacity: 0.7; transition: opacity 0.2s; }
   .bar:hover { opacity: 1; }
-
-  .bar-label {
-    font-size: 0.65rem;
-    color: var(--muted);
-  }
-
-  /* Activity list */
+  .bar-label { font-size: 0.65rem; color: var(--muted); }
   .activity-list { list-style: none; }
-
-  .activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
-  }
-
+  .activity-item { display: flex; align-items: center; gap: 12px; padding: 0.7rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
   .activity-item:last-child { border-bottom: none; }
-
-  .act-icon {
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    background: var(--surface2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-  }
-
+  .act-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
   .act-desc { flex: 1; }
   .act-time { font-size: 0.78rem; color: var(--muted); }
-
-  /* System info table */
   .info-table { width: 100%; border-collapse: collapse; }
-  .info-table td {
-    padding: 0.6rem 0;
-    font-size: 0.88rem;
-    border-bottom: 1px solid var(--border);
-  }
+  .info-table td { padding: 0.6rem 0; font-size: 0.88rem; border-bottom: 1px solid var(--border); }
   .info-table td:first-child { color: var(--muted); width: 40%; }
   .info-table tr:last-child td { border-bottom: none; }
-
-  .pill {
-    display: inline-block;
-    padding: 0.15rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
+  .pill { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
   .pill.green { background: rgba(62,207,142,0.12); color: var(--success); }
   .pill.blue { background: rgba(79,142,247,0.12); color: var(--accent); }
+  .pill.amber { background: rgba(245,166,35,0.12); color: var(--warn); }
 
-  /* Hamburger for mobile */
-  .ham {
-    display: none;
-    position: fixed;
-    top: 1rem; left: 1rem;
-    z-index: 200;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.5rem 0.7rem;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: var(--text);
-  }
+  /* ═══ X-RAY SECTION ═══ */
+  .xray-banner { background: linear-gradient(135deg, rgba(79,142,247,0.08), rgba(124,94,247,0.08)); border: 1px solid rgba(79,142,247,0.2); border-radius: var(--radius); padding: 1.2rem 1.4rem; display: flex; align-items: center; gap: 14px; margin-bottom: 1.4rem; flex-wrap: wrap; gap: 12px; }
+  .xray-banner-icon { font-size: 1.6rem; }
+  .xray-banner-text h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.2rem; }
+  .xray-banner-text p { font-size: 0.8rem; color: var(--muted); }
+  .llm-badge { margin-left: auto; flex-shrink: 0; background: rgba(124,94,247,0.12); color: #a88ef7; border: 1px solid rgba(124,94,247,0.25); border-radius: 20px; padding: 0.25rem 0.8rem; font-size: 0.72rem; font-weight: 500; }
+  .xray-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  .xray-input-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; }
+  .sample-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .sample-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.7rem; font-size: 0.75rem; color: var(--muted); cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; }
+  .sample-btn:hover { border-color: var(--accent); color: var(--accent); }
+  textarea#xray-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; font-size: 0.88rem; font-family: inherit; color: var(--text); outline: none; resize: vertical; min-height: 200px; transition: border-color 0.2s; line-height: 1.6; }
+  textarea#xray-input:focus { border-color: var(--accent); }
+  .char-count { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 0.4rem; margin-bottom: 0.8rem; }
+  .btn-generate { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 10px; padding: 0.85rem; font-size: 0.92rem; font-family: inherit; font-weight: 500; color: #fff; cursor: pointer; transition: opacity 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-generate:hover:not(:disabled) { opacity: 0.9; }
+  .btn-generate:active:not(:disabled) { transform: scale(0.99); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+  .xray-result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; display: flex; flex-direction: column; }
+  .result-placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; gap: 1rem; color: var(--muted); min-height: 300px; }
+  .placeholder-icon { font-size: 2.5rem; opacity: 0.4; }
+  .placeholder-text { font-size: 0.85rem; line-height: 1.6; }
+  .spinner-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; min-height: 300px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--surface2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-label { font-size: 0.85rem; color: var(--muted); }
+  .report-output { flex: 1; }
+  .report-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+  .report-timestamp { font-size: 0.75rem; color: var(--muted); }
+  .report-status { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--success); }
+  .report-section { margin-bottom: 1.2rem; }
+  .report-section-title { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .report-section-body { font-size: 0.88rem; line-height: 1.7; color: var(--text); background: var(--surface2); border-radius: 8px; padding: 0.8rem 1rem; }
+  .report-section-body ul { padding-left: 1.2rem; }
+  .report-section-body li { margin-bottom: 0.3rem; }
+  .urgency-badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem; }
+  .urgency-routine { background: rgba(62,207,142,0.12); color: var(--success); }
+  .urgency-urgent { background: rgba(245,166,35,0.15); color: var(--warn); }
+  .urgency-critical { background: rgba(242,78,78,0.12); color: var(--danger); }
+  .btn-copy { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--muted); cursor: pointer; font-family: inherit; transition: color 0.15s, border-color 0.15s; margin-top: 0.8rem; }
+  .btn-copy:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .reject-box { background: rgba(242,78,78,0.06); border: 1px solid rgba(242,78,78,0.2); border-radius: 10px; padding: 1.4rem; text-align: center; }
+  .reject-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+  .reject-title { font-size: 0.92rem; font-weight: 500; color: var(--danger); margin-bottom: 0.5rem; }
+  .reject-msg { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
 
-  .overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 90;
-  }
+  /* MOBILE */
+  .ham { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 200; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; cursor: pointer; font-size: 1.1rem; color: var(--text); }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; }
 
+  @media (max-width: 900px) { .xray-layout { grid-template-columns: 1fr; } }
   @media (max-width: 768px) {
     .ham { display: block; }
     .sidebar { transform: translateX(-100%); }
@@ -431,62 +149,42 @@
     .cards-row { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
   }
-
-  @media (max-width: 480px) {
-    .stats-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<!-- ══ LOGIN ══ -->
 <div id="login-page">
   <div class="login-card">
     <div class="logo">DemoApp</div>
     <p class="login-subtitle">Cloud Hosting Trial — Vendor Demo</p>
-
     <div class="form-group">
       <label>Username</label>
       <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
     </div>
-
     <div class="form-group">
       <label>Password</label>
       <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" />
     </div>
-
     <button class="btn-login" onclick="doLogin()">Sign In</button>
     <p class="error-msg" id="err-msg"></p>
-
-    <div class="hint">
-      Test account: <code>admin</code> / <code>demo1234</code>
-    </div>
+    <div class="hint">Test account: <code>admin</code> / <code>demo1234</code></div>
   </div>
 </div>
 
-<!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+<!-- ══ DASHBOARD ══ -->
 <div id="dashboard-page">
-
-  <button class="ham" id="ham-btn" onclick="toggleSidebar()">☰</button>
+  <button class="ham" onclick="toggleSidebar()">☰</button>
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">DemoApp</div>
-
-    <button class="nav-item active" onclick="setNav(this,'overview')">
-      <span class="nav-icon">◈</span> Overview
-    </button>
-    <button class="nav-item" onclick="setNav(this,'system')">
-      <span class="nav-icon">⬡</span> System Info
-    </button>
-    <button class="nav-item" onclick="setNav(this,'activity')">
-      <span class="nav-icon">◎</span> Activity
-    </button>
-    <button class="nav-item" onclick="setNav(this,'deploy')">
-      <span class="nav-icon">⬤</span> Deployment
-    </button>
-
+    <button class="nav-item active" onclick="setNav(this,'overview')"><span class="nav-icon">◈</span> Overview</button>
+    <button class="nav-item" onclick="setNav(this,'xray')"><span class="nav-icon">⚕</span> X-Ray Report</button>
+    <button class="nav-item" onclick="setNav(this,'system')"><span class="nav-icon">⬡</span> System Info</button>
+    <button class="nav-item" onclick="setNav(this,'activity')"><span class="nav-icon">◎</span> Activity</button>
+    <button class="nav-item" onclick="setNav(this,'deploy')"><span class="nav-icon">⬤</span> Deployment</button>
     <div class="sidebar-footer">
       <div class="user-pill">
         <div class="avatar" id="av-initials">AD</div>
@@ -499,51 +197,78 @@
     </div>
   </nav>
 
-  <!-- Main -->
   <main class="main-content">
     <div class="topbar">
       <h1 class="page-title" id="page-title">Overview</h1>
       <span class="badge"><span class="dot"></span> Server Online</span>
     </div>
 
-    <!-- OVERVIEW SECTION -->
+    <!-- OVERVIEW -->
     <div id="sec-overview">
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Uptime</div>
-          <div class="stat-value">99.9<span style="font-size:1rem">%</span></div>
-          <div class="stat-delta">↑ Stable</div>
+        <div class="stat-card"><div class="stat-label">Uptime</div><div class="stat-value">99.9<span style="font-size:1rem">%</span></div><div class="stat-delta">↑ Stable</div></div>
+        <div class="stat-card"><div class="stat-label">CPU Usage</div><div class="stat-value" id="cpu-val">18<span style="font-size:1rem">%</span></div><div class="stat-delta">↓ Low load</div></div>
+        <div class="stat-card"><div class="stat-label">Memory</div><div class="stat-value">1.2<span style="font-size:1rem">GB</span></div><div class="stat-delta">of 4 GB</div></div>
+        <div class="stat-card"><div class="stat-label">Requests</div><div class="stat-value" id="req-val">247</div><div class="stat-delta">↑ +12 today</div></div>
+      </div>
+      <div class="cards-row">
+        <div class="card"><div class="card-title">Request Traffic (7 days)</div><div class="bar-chart" id="bar-chart"></div></div>
+        <div class="card"><div class="card-title">Recent Activity</div><ul class="activity-list" id="act-list"></ul></div>
+      </div>
+    </div>
+
+    <!-- X-RAY REPORT -->
+    <div id="sec-xray" style="display:none">
+      <div class="xray-banner">
+        <div class="xray-banner-icon">🫁</div>
+        <div class="xray-banner-text">
+          <h3>X-Ray Findings Interpreter</h3>
+          <p>Enter radiological text findings → LLM generates structured interpretation & clinical recommendations</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">CPU Usage</div>
-          <div class="stat-value" id="cpu-val">18<span style="font-size:1rem">%</span></div>
-          <div class="stat-delta">↓ Low load</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Memory</div>
-          <div class="stat-value">1.2<span style="font-size:1rem">GB</span></div>
-          <div class="stat-delta">of 4 GB</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Requests</div>
-          <div class="stat-value" id="req-val">247</div>
-          <div class="stat-delta">↑ +12 today</div>
-        </div>
+        <div class="llm-badge">LLM Inference</div>
       </div>
 
-      <div class="cards-row">
-        <div class="card">
-          <div class="card-title">Request Traffic (7 days)</div>
-          <div class="bar-chart" id="bar-chart"></div>
+      <div class="xray-layout">
+        <!-- INPUT PANEL -->
+        <div class="xray-input-card">
+          <div class="card-title">Radiological Findings Input</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">Quick sample cases:</div>
+          <div class="sample-btns">
+            <button class="sample-btn" onclick="loadSample('normal')">Normal Chest</button>
+            <button class="sample-btn" onclick="loadSample('pneumonia')">Pneumonia</button>
+            <button class="sample-btn" onclick="loadSample('pleural')">Pleural Effusion</button>
+            <button class="sample-btn" onclick="loadSample('fracture')">Rib Fracture</button>
+          </div>
+          <textarea id="xray-input" placeholder="Enter X-ray radiological findings here...
+
+Example:
+Chest PA view. Lungs show increased opacity in the right lower lobe with air bronchograms. Costophrenic angles blunted. Heart size normal."></textarea>
+          <div class="char-count"><span id="char-count">0</span> characters</div>
+          <button class="btn-generate" id="btn-gen" onclick="generateReport()">
+            <span id="btn-gen-text">⚕ Generate Clinical Report</span>
+          </button>
+          <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--muted);text-align:center;">
+            ⚠ Demo only — not for clinical use. Unrelated prompts will be rejected.
+          </div>
         </div>
-        <div class="card">
-          <div class="card-title">Recent Activity</div>
-          <ul class="activity-list" id="act-list"></ul>
+
+        <!-- OUTPUT PANEL -->
+        <div class="xray-result-card">
+          <div class="card-title">Generated Report</div>
+          <div class="result-placeholder" id="result-placeholder">
+            <div class="placeholder-icon">📋</div>
+            <div class="placeholder-text">Enter radiological findings on the left,<br>then click <strong>Generate Clinical Report</strong>.</div>
+          </div>
+          <div class="spinner-wrap" id="result-spinner" style="display:none">
+            <div class="spinner"></div>
+            <div class="spinner-label">LLM processing findings…</div>
+          </div>
+          <div class="report-output" id="report-output" style="display:none"></div>
         </div>
       </div>
     </div>
 
-    <!-- SYSTEM INFO SECTION -->
+    <!-- SYSTEM INFO -->
     <div id="sec-system" style="display:none">
       <div class="card" style="max-width:600px">
         <div class="card-title">Host Environment</div>
@@ -555,14 +280,14 @@
           <tr><td>Port (external)</td><td>8080 → 80</td></tr>
           <tr><td>Container</td><td><span class="pill green">Running</span></td></tr>
           <tr><td>Image</td><td>demoapp:latest</td></tr>
+          <tr><td>LLM Backend</td><td><span class="pill amber">Local inference (Ollama)</span></td></tr>
           <tr><td>Network</td><td>bridge (docker default)</td></tr>
-          <tr><td>Volume</td><td>— (stateless demo)</td></tr>
           <tr><td>Health Check</td><td><span class="pill blue">HTTP GET /</span></td></tr>
         </table>
       </div>
     </div>
 
-    <!-- ACTIVITY SECTION -->
+    <!-- ACTIVITY -->
     <div id="sec-activity" style="display:none">
       <div class="card">
         <div class="card-title">Full Activity Log</div>
@@ -570,7 +295,7 @@
       </div>
     </div>
 
-    <!-- DEPLOYMENT SECTION -->
+    <!-- DEPLOYMENT -->
     <div id="sec-deploy" style="display:none">
       <div class="card" style="max-width:640px">
         <div class="card-title">Deployment Configuration</div>
@@ -580,18 +305,19 @@
           <tr><td>Exposed Port</td><td>8080 (host) → 80 (container)</td></tr>
           <tr><td>Protocol</td><td>HTTP (demo); HTTPS via proxy</td></tr>
           <tr><td>Deploy Command</td><td><code style="font-size:0.78rem;background:var(--surface2);padding:2px 6px;border-radius:4px">docker compose up -d</code></td></tr>
-          <tr><td>Min. RAM</td><td>512 MB</td></tr>
-          <tr><td>Min. CPU</td><td>1 vCPU</td></tr>
-          <tr><td>Storage</td><td>~50 MB (image only)</td></tr>
+          <tr><td>Min. RAM</td><td>512 MB (+ 4–8 GB if LLM enabled)</td></tr>
+          <tr><td>Min. CPU</td><td>1 vCPU (+ GPU optional for LLM)</td></tr>
+          <tr><td>Storage</td><td>~50 MB app + ~4 GB LLM model</td></tr>
         </table>
       </div>
     </div>
-
   </main>
 </div>
 
 <script>
 const USERS = { admin: 'demo1234' };
+const ALL_SECS = ['overview','xray','system','activity','deploy'];
+const SEC_TITLES = { overview:'Overview', xray:'X-Ray Report', system:'System Info', activity:'Activity Log', deploy:'Deployment' };
 
 function doLogin() {
   const u = document.getElementById('username').value.trim();
@@ -604,9 +330,7 @@ function doLogin() {
     document.getElementById('display-name').textContent = u.charAt(0).toUpperCase() + u.slice(1);
     document.getElementById('av-initials').textContent = u.slice(0,2).toUpperCase();
     initDashboard();
-  } else {
-    err.textContent = 'Invalid username or password.';
-  }
+  } else { err.textContent = 'Invalid username or password.'; }
 }
 
 function doLogout() {
@@ -616,21 +340,14 @@ function doLogout() {
   document.getElementById('password').value = '';
 }
 
-document.getElementById('password').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-document.getElementById('username').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('password').focus();
-});
+document.getElementById('password').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+document.getElementById('username').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('password').focus(); });
 
 function setNav(btn, sec) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  ['overview','system','activity','deploy'].forEach(s => {
-    document.getElementById('sec-'+s).style.display = s===sec ? '' : 'none';
-  });
-  document.getElementById('page-title').textContent =
-    {overview:'Overview',system:'System Info',activity:'Activity Log',deploy:'Deployment'}[sec];
+  ALL_SECS.forEach(s => { document.getElementById('sec-'+s).style.display = s===sec ? '' : 'none'; });
+  document.getElementById('page-title').textContent = SEC_TITLES[sec];
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -641,16 +358,15 @@ function toggleSidebar() {
 
 const activities = [
   {icon:'🔐', desc:'Admin logged in', time:'2 min ago'},
+  {icon:'⚕',  desc:'X-Ray report generated', time:'8 min ago'},
   {icon:'🚀', desc:'Container started successfully', time:'10 min ago'},
   {icon:'✅', desc:'Health check passed', time:'15 min ago'},
   {icon:'🔄', desc:'Nginx config reloaded', time:'1 hr ago'},
   {icon:'📦', desc:'Docker image pulled', time:'2 hr ago'},
   {icon:'🖥️', desc:'Server provisioned', time:'3 hr ago'},
-  {icon:'🌐', desc:'DNS resolved', time:'4 hr ago'},
 ];
 
 function initDashboard() {
-  // Bar chart
   const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const vals = [42,67,55,88,73,95,61];
   const max = Math.max(...vals);
@@ -659,37 +375,176 @@ function initDashboard() {
   vals.forEach((v,i) => {
     const w = document.createElement('div');
     w.className = 'bar-wrap';
-    w.innerHTML = `<div class="bar" style="height:${(v/max)*100}%" title="${v} requests"></div><div class="bar-label">${days[i]}</div>`;
+    w.innerHTML = `<div class="bar" style="height:${Math.round((v/max)*100)}%" title="${v} requests"></div><div class="bar-label">${days[i]}</div>`;
     chart.appendChild(w);
   });
 
-  // Activity lists
   ['act-list','act-list-full'].forEach(id => {
     const el = document.getElementById(id);
     el.innerHTML = '';
     activities.forEach(a => {
-      el.innerHTML += `<li class="activity-item">
-        <div class="act-icon">${a.icon}</div>
-        <span class="act-desc">${a.desc}</span>
-        <span class="act-time">${a.time}</span>
-      </li>`;
+      el.innerHTML += `<li class="activity-item"><div class="act-icon">${a.icon}</div><span class="act-desc">${a.desc}</span><span class="act-time">${a.time}</span></li>`;
     });
   });
 
-  // Simulate live CPU
   setInterval(() => {
     const v = 12 + Math.round(Math.random()*20);
     document.getElementById('cpu-val').innerHTML = v+'<span style="font-size:1rem">%</span>';
   }, 3000);
 
-  // Simulate requests counter
   let req = 247;
   setInterval(() => {
-    if (Math.random() > 0.6) {
-      req++;
-      document.getElementById('req-val').textContent = req;
-    }
+    if (Math.random() > 0.6) { req++; document.getElementById('req-val').textContent = req; }
   }, 4000);
+
+  document.getElementById('xray-input').addEventListener('input', function() {
+    document.getElementById('char-count').textContent = this.value.length;
+  });
+}
+
+// SAMPLE DATA
+const SAMPLES = {
+  normal: `Chest PA view. Lungs are clear bilaterally with no focal consolidation, pleural effusion, or pneumothorax. Cardiac silhouette is normal in size. Mediastinum is within normal limits. Trachea is midline. Bony thorax shows no acute osseous abnormality. Diaphragm and costophrenic angles are normal.`,
+  pneumonia: `Chest PA and lateral views. There is a patchy area of increased opacity in the right lower lobe with air bronchograms noted, consistent with consolidation. The left lung is clear. Costophrenic angles are sharp bilaterally. Cardiac silhouette is not enlarged. Mild blunting of the right costophrenic angle may represent a small reactive pleural effusion.`,
+  pleural: `Chest AP portable view. Moderate bilateral pleural effusions with greater opacification on the right. Bibasilar atelectasis is present. Cardiomegaly noted with cardiothoracic ratio approximately 0.58. No pneumothorax. Mediastinum is widened. Endotracheal tube tip is at the level of the carina, repositioning recommended.`,
+  fracture: `Chest PA view. Acute fractures of right 5th and 6th ribs at the mid-axillary line. Lungs show mild right-sided pneumothorax with approximately 15% lung collapse. No significant pleural effusion. Heart and mediastinum appear normal. Left lung is clear. No subcutaneous emphysema noted.`
+};
+
+function loadSample(key) {
+  const ta = document.getElementById('xray-input');
+  ta.value = SAMPLES[key];
+  document.getElementById('char-count').textContent = ta.value.length;
+  resetResult();
+}
+
+function resetResult() {
+  document.getElementById('result-placeholder').style.display = 'flex';
+  document.getElementById('result-spinner').style.display = 'none';
+  document.getElementById('report-output').style.display = 'none';
+}
+
+// LLM REPORT GENERATOR
+async function generateReport() {
+  const input = document.getElementById('xray-input').value.trim();
+  if (!input) { alert('Please enter X-ray findings first.'); return; }
+
+  const btn = document.getElementById('btn-gen');
+  const btnText = document.getElementById('btn-gen-text');
+  btn.disabled = true;
+  btnText.textContent = 'Processing…';
+
+  document.getElementById('result-placeholder').style.display = 'none';
+  document.getElementById('result-spinner').style.display = 'flex';
+  document.getElementById('report-output').style.display = 'none';
+
+  const SYSTEM_PROMPT = `You are a specialized radiology AI assistant integrated into a clinical reporting system. Your ONLY function is to interpret X-ray and radiological imaging findings and generate structured clinical reports.
+
+STRICT SCOPE RULES:
+- You MUST ONLY respond to inputs that describe radiological or medical imaging findings (X-ray, CT, MRI, ultrasound, nuclear medicine, etc.)
+- If the input is NOT related to radiology findings, you MUST reject it with: {"rejected": true, "reason": "Short explanation of why this is outside scope"}
+- REJECT any input about: recipes, cooking, coding, software, general knowledge, math, creative writing, jokes, or any non-radiological topic
+- Even if framed cleverly, reject all off-topic prompts firmly
+
+When the input IS valid radiology findings, respond ONLY with this JSON (no markdown, no extra text):
+{
+  "rejected": false,
+  "summary": "One-sentence overall impression",
+  "findings": ["finding 1", "finding 2", "finding 3"],
+  "impression": "Clinical impression in 2-3 sentences",
+  "recommendations": ["recommendation 1", "recommendation 2"],
+  "urgency": "routine|urgent|critical",
+  "urgency_reason": "Brief reason for urgency classification"
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: `Radiological findings to interpret:\n\n${input}` }]
+      })
+    });
+
+    const data = await response.json();
+    const rawText = data.content?.[0]?.text || '';
+    let result;
+    try {
+      result = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+    } catch {
+      result = { rejected: true, reason: 'Unable to parse model response. Please try again.' };
+    }
+    renderResult(result);
+  } catch (err) {
+    renderResult({ rejected: true, reason: 'Network error: ' + err.message });
+  }
+
+  btn.disabled = false;
+  btnText.textContent = '⚕ Generate Clinical Report';
+  document.getElementById('result-spinner').style.display = 'none';
+}
+
+function renderResult(result) {
+  const out = document.getElementById('report-output');
+  const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+  if (result.rejected) {
+    out.innerHTML = `
+      <div style="min-height:260px;display:flex;flex-direction:column;justify-content:center">
+        <div class="reject-box">
+          <div class="reject-icon">⛔</div>
+          <div class="reject-title">Input Rejected — Outside Scope</div>
+          <div class="reject-msg">${result.reason || 'This system only processes radiological imaging findings. Unrelated queries are not permitted.'}</div>
+        </div>
+        <div style="margin-top:1rem;font-size:0.78rem;color:var(--muted);text-align:center;line-height:1.6">
+          The LLM inference module is restricted to radiology interpretation only.<br>
+          Prompts about recipes, code, general questions, or other topics are blocked.
+        </div>
+      </div>`;
+  } else {
+    const urgencyClass = { routine:'urgency-routine', urgent:'urgency-urgent', critical:'urgency-critical' }[result.urgency] || 'urgency-routine';
+    const urgencyLabel = (result.urgency || 'routine').toUpperCase();
+    const findingsList = (result.findings || []).map(f => `<li>${f}</li>`).join('');
+    const recsList = (result.recommendations || []).map(r => `<li>${r}</li>`).join('');
+    const copyText = `IMPRESSION: ${result.summary}\n\nFINDINGS:\n${(result.findings||[]).join('\n')}\n\nCLINICAL INTERPRETATION:\n${result.impression}\n\nRECOMMENDATIONS:\n${(result.recommendations||[]).join('\n')}\n\nURGENCY: ${urgencyLabel} — ${result.urgency_reason}`;
+
+    out.innerHTML = `
+      <div class="report-meta">
+        <span class="report-timestamp">${now}</span>
+        <span class="report-status"><span class="dot"></span> LLM Complete</span>
+      </div>
+      <div class="report-section">
+        <div class="report-section-title">Overall Impression</div>
+        <div class="report-section-body">${result.summary || '—'}
+          <div><span class="urgency-badge ${urgencyClass}">${urgencyLabel} — ${result.urgency_reason || ''}</span></div>
+        </div>
+      </div>
+      <div class="report-section">
+        <div class="report-section-title">Key Findings</div>
+        <div class="report-section-body"><ul>${findingsList || '<li>No specific findings extracted.</li>'}</ul></div>
+      </div>
+      <div class="report-section">
+        <div class="report-section-title">Clinical Interpretation</div>
+        <div class="report-section-body">${result.impression || '—'}</div>
+      </div>
+      <div class="report-section">
+        <div class="report-section-title">Recommendations</div>
+        <div class="report-section-body"><ul>${recsList || '<li>No specific recommendations.</li>'}</ul></div>
+      </div>
+      <button class="btn-copy" onclick="copyToClipboard(this, \`${btoa(unescape(encodeURIComponent(copyText)))}\`)">⎘ Copy Report</button>`;
+  }
+
+  out.style.display = 'block';
+}
+
+function copyToClipboard(btn, b64) {
+  const text = decodeURIComponent(escape(atob(b64)));
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '⎘ Copy Report', 2000);
+  });
 }
 </script>
 </body>
