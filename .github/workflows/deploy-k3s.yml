@@ -45,9 +45,23 @@ jobs:
         
       - name: Deploy to k3s
         run: |
-          # Ganti placeholder image di file deployment.yaml dengan tag terbaru
-          sed -i "s|image: ghcr.io/ilyasjaelani/simple-demoapp:.*|image: ${{ env.IMAGE }}:${{ env.IMAGE_TAG }}|g" deployment.yaml
+          # Ambil tag dari environment variable yang sudah diset di step sebelumnya
+          # Gunakan pemisah '|' agar tidak bentrok dengan '/' di nama image
           
+          TAG=${{ env.IMAGE_TAG }}
+          echo "Deploying version: $TAG"
+          
+          # Pastikan variabel TAG tidak kosong sebelum eksekusi
+          if [ -z "$TAG" ]; then
+            echo "Error: IMAGE_TAG is empty"
+            exit 1
+          fi
+
+          # Ganti placeholder image di file deployment.yaml dengan tag terbaru
+          sed -i "s|image: ${{ env.IMAGE }}:.*|image: ${{ env.IMAGE }}:$TAG|g" deployment.yaml
+          
+          cat deployment.yaml | grep image:
+
           # Terapkan perubahan ke cluster
           kubectl apply -f deployment.yaml
 
