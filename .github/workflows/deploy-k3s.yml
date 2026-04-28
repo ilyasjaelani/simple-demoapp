@@ -58,7 +58,7 @@ jobs:
           sed -i "s|image: ${{ env.IMAGE }}:.*|image: ${{ env.IMAGE }}:${{ env.IMAGE_TAG }}|g" deployment.yaml
           
           # Apply ke K8s
-          kubectl apply -f deployment.yaml
+          kubectl delete -f deployment.yaml
 
       - name: Wait for rollout
         run: |
