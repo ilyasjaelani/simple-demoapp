@@ -29,40 +29,35 @@ jobs:
       - name: Build & push image
         id: build_step
         run: |
-          # Ambil 7 karakter pertama SHA untuk tagging
-          TAG=sha-${{ github.sha }}
-          TAG=${TAG:0:11} 
+          # Buat tag
+          TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
           
-          echo "Building $TAG..."
+          # Build & Push
           docker build -t ${{ env.IMAGE }}:$TAG -t ${{ env.IMAGE }}:latest .
-          
           docker push ${{ env.IMAGE }}:$TAG
           docker push ${{ env.IMAGE }}:latest
           
-          # Simpan tag ke output agar bisa dipakai step berikutnya
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-        # ID digunakan untuk mereferensikan output step ini
-        
+          # --- BAGIAN KRUSIAL ---
+          # Simpan ke GITHUB_ENV agar step 'Deploy' bisa baca
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+      
+      - name: Debug Env
+        run: env | grep IMAGE  
+
       - name: Deploy to k3s
         run: |
-          # Ambil tag dari environment variable yang sudah diset di step sebelumnya
-          # Gunakan pemisah '|' agar tidak bentrok dengan '/' di nama image
+          echo "Deploying version: ${{ env.IMAGE_TAG }}"
           
-          TAG=${{ env.IMAGE_TAG }}
-          echo "Deploying version: $TAG"
-          
-          # Pastikan variabel TAG tidak kosong sebelum eksekusi
-          if [ -z "$TAG" ]; then
-            echo "Error: IMAGE_TAG is empty"
+          # Cek jika kosong (untuk keamanan)
+          if [ -z "${{ env.IMAGE_TAG }}" ]; then
+            echo "Error: IMAGE_TAG is still empty!"
             exit 1
           fi
 
-          # Ganti placeholder image di file deployment.yaml dengan tag terbaru
-          sed -i "s|image: ${{ env.IMAGE }}:.*|image: ${{ env.IMAGE }}:$TAG|g" deployment.yaml
+          # Eksekusi SED
+          sed -i "s|image: ${{ env.IMAGE }}:.*|image: ${{ env.IMAGE }}:${{ env.IMAGE_TAG }}|g" deployment.yaml
           
-          cat deployment.yaml | grep image:
-
-          # Terapkan perubahan ke cluster
+          # Apply ke K8s
           kubectl apply -f deployment.yaml
 
       - name: Wait for rollout
